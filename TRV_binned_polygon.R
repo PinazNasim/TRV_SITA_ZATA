@@ -2,7 +2,9 @@ library(csvread)
 DATA<- read.csv("C://Users//DELL//Documents//DATA//TRV_DATA.csv")
 source("C://Users//DELL//Documents//CODES//SITA_ZATA_TRV_codes//blindspots_removing_codes.R")
 pdf("C://Users//DELL//OneDrive//Documents//TRV_binned_polygon.pdf", h = 20, w= 20)
-par(mfrow = c(2, 2))
+layout(matrix(c(1, 3, 5, 2, 4, 5), nrow = 3, ncol = 2), 
+       widths = rep(1, 2), heights = c(rep(1, 2), 0.20))
+par(mar = c(12, 12, 7, 7))
 Test<- c("SS", "ZS","SF", "ZF")
 for (t in Test){
   test = t
@@ -53,52 +55,57 @@ for (t in Test){
   b<- rep(NA, length(Loc))
   c<- rep(NA, length(Loc))
   d<- rep(NA, length(Loc))
+  e<- rep(NA, length(Loc))
+  f<- rep(NA, length(Loc))
   for(i in 1:18){
     Bin[[i]]<- unlist(Bin[i])
-    a[i]<- quantile(Bin[[i]], 0.1)
-    b[i]<- quantile(Bin[[i]], 0.9)
-    c[i]<- quantile(Bin[[i]], 0.05)
-    d[i]<- quantile(Bin[[i]], 0.95)
+    a[i]<- quantile(Bin[[i]], 0.05)
+    b[i]<- quantile(Bin[[i]], 0.95)
+    c[i]<- quantile(Bin[[i]], 0.1)
+    d[i]<- quantile(Bin[[i]], 0.9)
+    e[i]<- quantile(Bin[[i]], 0.25)
+    f[i]<- quantile(Bin[[i]], 0.75)
     
   }
   
   
   # 5 and 95 th percentile to hist
   plot(c(0:35), c(0: 35), type = "n", lty = 2 , lwd = 2, 
-       axes = F,xlim = c(0, 34), ylim = c(0, 34),
-       xlab = "Baseline sensitivity(dB)",
-       ylab = "Retest sensitivity (dB)", main = ifelse(test == "SS", "a) SITA Standard", ifelse(test == "SF", "c) SITA Fast",
-                                                                                                ifelse(test == "ZS", "b) ZATA Standard", "d) ZATA Fast"))))
-  axis(1,at= Loc,labels= Loc, col = "black", cex.axis = 0.7)
-  axis(2,at= seq(0, 34, by = 2),labels= seq(0, 34, by = 2), col = "black", cex.axis = 1)
+       axes = F,xlim = c(0, 34), ylim = c(0, 34), cex.main = 3.5, 
+       xlab = " ",cex.lab = 2, 
+       ylab = " ", main = ifelse(test == "SS", "a) SITA Standard", ifelse(test == "SF", "c) SITA Fast",
+                                                                          ifelse(test == "ZS", "b) ZATA Standard", "d) ZATA Fast"))))
+  
+  
+  mtext(ifelse(test == "SS", "Retest sensitivity (dB)                                               "," "),
+        side = 2, line = 7, cex = 4)
+  
+  axis(1,at= seq(0, 35, by = 7),labels= seq(0, 35, by = 7), col = "black",
+       cex.axis = 3, padj = 1)
+  axis(2,at= seq(0, 35, by = 7),labels= seq(0, 35, by = 7), col = "black", 
+       cex.axis = 3, hadj = 1.5, las = 1)
   
   box()
-  # points(c(0:33), x_a, type = "p", col = "black", pch =16, cex = 1)
-  # points(c(0:33), x_b, type = "p", col = "black", pch =16, cex = 1)
-  # lines(Loc, a, type = "l", lty = 1, col = "grey", cex = 1, lwd = 2)
-  # lines(Loc, b, type = "l", lty = 1, col = "grey", cex = 1, lwd = 2)
-  # lines(Loc, c, type = "l", lty = 1, col = "skyblue", cex = 1, lwd = 2)
-  # lines(Loc, d, type = "l", lty = 1, col = "skyblue", cex = 1, lwd = 2)
-  
-  polygon(Loc, c, col = "grey", border = "grey", lwd = 5)
-  polygon(Loc, a, col = "white", border = "white")
-  polygon(Loc, d, col = "grey", border = "grey", lwd = 2)
-  polygon(Loc, b, col = "white", border = "white")
+  polygon(c(Loc[1],Loc, Loc[18:2]), c(b[1], a, b[18:2]),col = "skyblue1", border = "skyblue1")
+  polygon(c(Loc[1],Loc, Loc[18:2]), c(d[1], c, d[18:2]),col = "skyblue3", border = "skyblue3")
+  polygon(c(Loc[1],Loc, Loc[18:2]), c(f[1], e, f[18:2]),col = "skyblue4", border = "skyblue4")
   points(c(0:35), c(0: 35), type = "l", lty = 5 , lwd = 2, col = "black")
   lines(Loc,  round(sapply(Bin, mean), digits = 2), lty = 1, col = "red",lwd = 2)
-  lines(Loc,  round(sapply(Bin, median), digits = 2), lty = 1, col = "yellow", lwd = 2)
-  # polygon(Loc, a, col = "grey", border = "grey")
-  # polygon(Loc[c(1:11)], a[c(1:11)], col = "grey", border = "grey")
-  # polygon(Loc[c(11:18)], a[c(11:18)], col = "grey", border = "grey")
-  # polygon(Loc, b, col = "grey", border = "grey")
-  # polygon(Loc[c(1:13)], c[c(1:13)], col = "skyblue", border = "skyblue")
-  # polygon(Loc[c(13:18)], c[c(13:18)], col = "skyblue", border = "skyblue")
-  # polygon(Loc, d, col = "skyblue", border = "skyblue")
-  text(Loc, a+2 , sapply(Bin, length), cex = 1, col = 1, srt = 90)
-  legend("topleft", c("5:10 & 90:95 %-ile","Mean"," Median"),
-         lty = rep(1, 4), col = c("grey","red","yellow"), bty = "n")
+  lines(Loc,  round(sapply(Bin, median), digits = 2), lty = 1, col = "green",lwd = 2)
+  text(Loc, a , sapply(Bin, length), cex = 2.5, col = "black", srt = 90)
   
 }
+
+
+mtext("Baseline sensitivity(dB)                                                     ",
+      side = 1 ,line = 8, cex= 4)
+par(mar = c(3, 3, 0, 3))
+plot(5, 5, type = "n", xlab = " ", ylab = " ", bty = "n", axes = F)
+legend(3, 8.2, c("5 & 95 percentile","10 & 90 percentile", "25 & 75 percentile"),
+       pch = rep(15, 3) , col = c("skyblue1", " skyblue3", "skyblue4")
+       , bty = "n", cex = 4)
+legend("topright", legend = c(" Median", "Mean"), col = c("green","red"),
+       lty = rep(1, 2),lwd = rep(12, 2), bty = "n", cex = 4)
 
 dev.off()
 library(pdftools)

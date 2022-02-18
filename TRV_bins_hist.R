@@ -9,9 +9,9 @@ pdf("C://Users//DELL//OneDrive//Documents//TRV_bins_hist.pdf", h = 45, w= 45)
 
 layout(matrix (c( c(21:25), c(1:5), c(6:10), c(11:15),
                   c(16:20)), ncol = 5, byrow = F)
-       ,heights = c(0.35,rep(1, 4)), widths = c(0.40, rep(1, 4)))
+       ,heights = c(0.35,rep(0.75, 3), 1), widths = c(0.75, rep(1, 4)))
 
-par(mar = c(15, 10, 2, 2))
+
 Test<- c("SS", "SF",  "ZS", "ZF")
 for (t in Test){
   test = t
@@ -46,76 +46,91 @@ for (t in Test){
       
     }
   }
+  par(mar = c(5, 5, 5,5))
   plot(5, 5, type = "n", axes = F, xlab = "", ylab = "")
-  mtext(ifelse(test == "SS", "a) SITA Standard", ifelse(test == "SF", "b) SITA Fast",
-                                                        ifelse(test == "ZS", "c) ZATA Standard", "d) ZATA Fast"))), side = 3,  line = -10, cex =5)
+  mtext(ifelse(test == "SS", "a) SITA Standard  ", ifelse(test == "SF", "b) SITA Fast  ",
+                                                          ifelse(test == "ZS", "c) ZATA Standard  ", "d) ZATA Fast    "))), side = 3,  line = -10, cex =6)
   library(RColorBrewer)
-  # Colour<- c("#e66101", "#fbd863", "#5e3c99", "#b2abd2")
-  Colour<- c("cyan4", "cyan3", "brown4", "brown3")
+  
+  Colour<- c("cyan4", "cyan3", "orangered3", "orangered")
+  
   for(n in 1:4){
     # plot in step of 2 DB
+    ifelse(n == 4,par(mar = c(28, 0, 0, 5)) , par(mar = c(5, 0, 0, 5)))
+    
     barplot(ifelse(n == 4, 1000,  160),Loc[[n]]/3,  width = 3,
-            col = "white", border = "white",
-            xlim = c(0, 36),axes = ifelse(test != "SS", F,  T),
-            ylim = c(0, ifelse(n == 4, 1000,  160)), cex.axis = 5,
+            col = "white", border = "white", xlim = c(0, 36),
+            axes = F,
+            ylim = c(0, ifelse(n == 4, 1000,  160)), 
             xlab = " ", cex.lab = 5)
+    axis(2,at = seq(0, ifelse(n == 4, 1000,  160), ifelse(n == 4, 200,  50)),
+         labels = seq(0, ifelse(n == 4, 1000,  160), ifelse(n == 4, 200,  50)),
+         cex.axis = 7,las = 1,hadj = 1.3,
+         col.axis = ifelse(test != "SS", "white",  "black"),
+         col = ifelse(test != "SS", "white",  "black"))
     
     s<- hist(x[[n]], breaks = seq(min(x[[n]]), max(x[[n]]), by = 1), cex.lab = 5,
-             ,main= " ", border = "white", add = T, 
+             ,main= " ", border = "white", add = TRUE, 
              xlim = c(0, 36), ylim = c(0, ifelse(n == 4, 1000,  160)),
              axes = F,
              xlab = " ", ylab = " " ,col = Colour[which(Test == test)])
     
-    par(mgp=c(4,4,0))
-    # axis(2, at= seq(0, ifelse(n !=4, 160,  1000), by = ifelse(n !=4, 50,  200)),
-    #      labels =seq(0, ifelse(n !=4, 160,  1000), by = ifelse(n !=4, 50,  200)),
-    #      cex.axis = 2.5, las = 2)
-    # axis(2, at= seq(0, ifelse(n !=4 & test == "SS", 160,
-    #                           ifelse(n ==4 & test == "SS", 1000, 0)),
-    #                 by = ifelse(n !=4, 10,
-    #                             ifelse(n ==4 & test == "SS",100, 0))),
-    #      labels =seq(0, ifelse(n !=4 & test == "SS", 160,
-    #                            ifelse(n ==4 & test == "SS", 1000, 0)),
-    #                  by = ifelse(n !=4, 100,
-    #                              ifelse(n ==4 & test == "SS",100), 0)),
-    #      cex.axis = 2.5, las = 2)
-    axis(1, at= seq(0, 35, by =5), labels = seq(0, 35, by =5),line = 1,
-         cex.axis = ifelse(n == 4, 5, 0.01), lwd = 1)
     
-    # text(which(s$counts > 160),150,s$counts[which(s$counts > 160)],cex =5)
-    # box()
     
-    abline (h=seq(from=10, to=1000, by= 10), col="white", lwd = 1)
-    points(which(s$counts > ifelse(n == 4, 1000,  160))-0.5,
-           rep(ifelse(n == 4, 940,  151), 
-               length(which(s$counts > ifelse(n == 4, 1000,  160)))), 
-           pch = 17, cex = 17)
+    axis(1, at= seq(0, 35, by =7), labels = seq(0, 35, by =7),line = 1,
+         cex.axis = ifelse(n == 4, 7, 0.001), 
+         lwd = ifelse(n == 4, 2, 0.001), 
+         col= ifelse(n == 4, "black", "white") 
+         ,padj = 2)
+    points(ifelse(n == 1, which(s$counts > 160)- 0.35, 1),150, pch = 17,
+           col = ifelse(n == 1, "black","white" ),cex = 15)
+    
+    text(ifelse(n == 1, which(s$counts > 160)+7, 1),150,
+         ifelse(n == 1, s$counts[which(s$counts > 160)]," " ),
+         col = "black", cex =6.5)
+    points(ifelse(n == 4 & test == "ZS", 
+                  which(s$counts > 1000)- 0.35, 1),925, pch = 17,
+           col = ifelse(n == 4 & test == "ZS", "black","white" ),cex = 15)
+    text(ifelse(n == 4 & test == "ZS", 
+                which(s$counts > 1000)- 8, 1),925,
+         ifelse(n == 4 & test == "ZS", s$counts[which(s$counts > 1000)]," " ),
+         col = "black", cex =6.5)
+    points(ifelse(n == 4 & test == "ZF", 
+                  which(s$counts > 1000)- 0.35, 1),925, pch = 17,
+           col = ifelse(n == 4 & test == "ZF", "black","white" ),cex = 15)
+    text(ifelse(n == 4 & test == "ZF", 
+                which(s$counts > 1000)- 8, 1),925,
+         ifelse(n == 4 & test == "ZF", s$counts[which(s$counts > 1000)]," " ),
+         col = "black", cex =6.5)
+    
+    abline (h=seq(from=0, to=1000, by= 50), col="grey94", lwd = 1)
     
     mtext(paste("n = ", length(x[[n]]), "     ", sep = " "), side = 3, 
-          line = -15, cex = 5)
+          line = -24, cex = 6)
   }
   
-  
-  
 }
+mtext("Threshold (dB)                                                                                         ", 
+      side = 1, cex = 6.5, line = 23)
 
+
+par(mar = c(0, 5, 5,  0))
 plot(5,5 , type = "n", xlab = " ", ylab = " ", axes = F)
-text(5, 4 , "Bin", cex = 7)
+text(5, 6, "Bin", cex = 9)
 
 
 for (n in 1:4){
+  par(mar = c(15, 15, 5, 15))
   plot(5, 5, type = "n", xlab = " ", ylab = " ", axes = F)
-  text(5, 5 , paste( Label[n]," dB", sep = " "), cex = 5, srt = 90)
+  text(5, 5 , paste( Label[n]," dB", sep = " "), cex = 9, srt = 90)
   
-  
-  
+
 }
-mtext("                                                                                                                                         Frequency",
-      side = 2, cex = 5)
-mtext("                                                                                                                                                                                                   Threshold (dB)", 
-      side = 1, cex = 5, line = 12)
+mtext("                                                                                   Frequency Distribution",
+      side = 2, cex = 8, line = 5)
 
 
 dev.off()
-pdf_convert(paste("C://Users//DELL//OneDrive//Documents//TRV_bins_hist.pdf", sep = ""), format = "jpeg")
+pdf_convert(paste("C://Users//DELL//OneDrive//Documents//TRV_bins_hist.pdf", sep = ""),
+            format = "jpeg")
 
