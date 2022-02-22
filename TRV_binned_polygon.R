@@ -1,10 +1,11 @@
 library(csvread)
 DATA<- read.csv("C://Users//DELL//Documents//DATA//TRV_DATA.csv")
 source("C://Users//DELL//Documents//CODES//SITA_ZATA_TRV_codes//blindspots_removing_codes.R")
-pdf("C://Users//DELL//OneDrive//Documents//TRV_binned_polygon.pdf", h = 20, w= 20)
+png("C://Users//DELL//OneDrive//Documents//TRV_binned_polygon.png",
+    family = "Times", h = 1500, w= 1500)
 layout(matrix(c(1, 3, 5, 2, 4, 5), nrow = 3, ncol = 2), 
        widths = rep(1, 2), heights = c(rep(1, 2), 0.20))
-par(mar = c(12, 12, 7, 7))
+par(mar = c(12, 15, 7, 7))
 Test<- c("SS", "ZS","SF", "ZF")
 for (t in Test){
   test = t
@@ -71,19 +72,19 @@ for (t in Test){
   
   # 5 and 95 th percentile to hist
   plot(c(0:35), c(0: 35), type = "n", lty = 2 , lwd = 2, 
-       axes = F,xlim = c(0, 34), ylim = c(1.3, 34), cex.main = 3.5, 
-       xlab = " ",cex.lab = 2, 
+       axes = F,xlim = c(0, 34), ylim = c(1.3, 34),
+       cex.main = 5, xlab = " ", 
        ylab = " ", main = ifelse(test == "SS", "a) SITA Standard", ifelse(test == "SF", "c) SITA Fast",
                                                                           ifelse(test == "ZS", "b) ZATA Standard", "d) ZATA Fast"))))
   
   
-  mtext(ifelse(test == "SS", "Retest sensitivity (dB)                                               "," "),
-        side = 2, line = 7, cex = 3)
+  mtext(ifelse(test == "SS", "Retest sensitivity (dB)                                         "," "),
+        side = 2, line = 10, cex = 5)
   
-  axis(1,at= seq(0, 35, by = 7),labels= seq(0, 35, by = 7), col = "black",
-       cex.axis = 3, padj = 1)
-  axis(2,at= seq(0, 35, by = 7),labels= seq(0, 35, by = 7), col = "black", 
-       cex.axis = 3, hadj = 1.5, las = 1)
+  axis(1,at= seq(0, 35, by = 5),labels= seq(0, 35, by = 5), col = "black",
+       cex.axis = 4, padj = 1)
+  axis(2,at= seq(0, 35, by = 5),labels= seq(0, 35, by = 5), col = "black", 
+       cex.axis = 4, hadj = 1.5, las = 1)
   
   box()
   polygon(c(Loc[1],Loc, Loc[18:2]), c(b[1], a, b[18:2]),col = "skyblue1", border = "skyblue1")
@@ -92,22 +93,22 @@ for (t in Test){
   points(c(0:35), c(0: 35), type = "l", lty = 5 , lwd = 2, col = "black")
   lines(Loc,  round(sapply(Bin, mean), digits = 2), lty = 1, col = "red",lwd = 2)
   lines(Loc,  round(sapply(Bin, median), digits = 2), lty = 1, col = "green",lwd = 2)
-  text(Loc, a+1.5, sapply(Bin, length), cex = 2.5, col = "yellow", srt = 90, font = 2)
+  text(Loc, a+1.5, sapply(Bin, length), cex = 2.5, col = "red", srt = 90, font = 2)
   
 }
 
 
-mtext("Baseline sensitivity(dB)                                                     ",
-      side = 1 ,line = 8, cex= 3)
+mtext("Baseline sensitivity(dB)                                           ",
+      side = 1 ,line = 12, cex= 5)
 par(mar = c(3, 3, 0, 3))
 plot(5, 5, type = "n", xlab = " ", ylab = " ", bty = "n", axes = F)
-legend(3, 8.2, c("5 & 95 percentile","10 & 90 percentile", "25 & 75 percentile"),
+legend(3, 8.3, c("5 & 95 percentile","10 & 90 percentile", "25 & 75 percentile"),
        pch = rep(15, 3) , col = c("skyblue1", " skyblue3", "skyblue4")
-       , bty = "n", cex = 4)
-legend("topright", legend = c(" Median", "Mean"), col = c("green","red"),
-       lty = rep(1, 2),lwd = rep(12, 2), bty = "n", cex = 4)
+       , bty = "n", cex = 4.3)
+legend("topright", legend = c("Median", "Mean"), col = c("green","red"),
+       lty = rep(1, 2),lwd = rep(12, 2), bty = "n", cex = 4.3)
 
 dev.off()
-library(pdftools)
-pdf_convert("C://Users//DELL//OneDrive//Documents//TRV_binned_polygon.pdf", format = "jpeg")
+# library(pdftools)
+# pdf_convert("C://Users//DELL//OneDrive//Documents//TRV_binned_polygon.pdf", format = "jpeg")
 
