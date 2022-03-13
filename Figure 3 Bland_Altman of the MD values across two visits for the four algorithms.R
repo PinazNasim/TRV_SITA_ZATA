@@ -13,10 +13,10 @@ md_D2<- vector("list", 4)
 Test_names<- c("SS", "ZS", "SF", "ZF")
 
 for (name in Test_names){
-        test = name
-        
-        md_D1[[test]]<- unlist(DATA[paste(test, "_Day1_md",sep="")])
-        md_D2[[test]]<- unlist(DATA[paste(test, "_Day2_md",sep="")])
+    test = name
+    
+    md_D1[[test]]<- unlist(DATA[paste(test, "_Day1_md",sep="")])
+    md_D2[[test]]<- unlist(DATA[paste(test, "_Day2_md",sep="")])
 }
 
 md_D1[["SS"]]<- as.numeric(unlist(md_D1$SS))
@@ -38,42 +38,62 @@ par(mar = c(5, 8, 5, 2))
 
 
 for (name in Test_names){
-        test = name
-        
-        
-        ba<- bland.altman.stats(md_D1[[test]], md_D2[[test]])
-        plot(ba$means, ba$diffs, xlim=c(-38, 5), ylim = c(-15, 15), 
-             panel.last = abline(h = ba$lines, lty = 3, col = "black", lwd = 4),
-             pch = ifelse(DATA$Category == "Normal", 16, 17),
-             main= ifelse(test == "SS", "a) SITA Standard", ifelse(test == "SF", "c) SITA Fast",
-                                                                   ifelse(test == "ZS", "b) ZATA Standard", "d) ZATA Fast"))),
-             xlab=" " ,ylab=" ", axes = F, 
-             type = 'p', col = ifelse(DATA$Category == "Normal", "midnightblue", "brown3"), cex=3,
-             cex.main = 3)
-        text(-36, (ba$mean.diffs-1), paste(round(ba$mean.diffs, digits = 2)),
-             font = 2, col = "black", cex = 2 )
-        text(-36, (ba$upper.limit-1), paste(round(ba$upper.limit, digits = 2)), 
-             font = 2, col = "black", cex = 2 )
-        text(-36, (ba$lower.limit-1), paste(round(ba$lower.limit, digits = 2)), 
-             font = 2, col = "black", cex = 2 )
-        
-        axis(1, at = seq(5, -35, -10), labels = seq(5, -35, -10),
-             cex.axis = 2, padj = 1.5)
-        axis(2, at = seq(15, -15, -5), labels = seq(15, -15, -5),
-             cex.axis = 2, hadj = 1.5, las = 1)
-        mtext(text = ifelse(test == "SS", " MD visit 1 - MD visit 2  (dB)                                                    ",
-                            " "), line = 6, side = 2, cex = 2)
-        
-        mtext(text= ifelse(test == "ZF", "Mean MD of visit 1 & 2 (dB)                                                       "," "),
-              line = 6, cex = 2, side = 1)
-        
-        
-        
-        box(col = "black", lwd = 4)
+    test = name
+    
+    
+    ba<- bland.altman.stats(md_D1[[test]], md_D2[[test]])
+    plot(1,1, xlim=c(-38, 5), ylim = c(-15, 15), 
+         main= ifelse(test == "SS", "a) SITA Standard", ifelse(test == "SF", "c) SITA Fast",
+                                                               ifelse(test == "ZS", "b) ZATA Standard", "d) ZATA Fast"))),
+         xlab=" " ,ylab=" ", axes = F, cex.main = 3, type = 'n')
+    
+    polygon(c(10, -40, -40, 10), c(ba$upper.limit, ba$upper.limit,
+                                 ba$lower.limit, ba$lower.limit), col = "light blue")
+    
+    
+    points(ba$means, ba$diffs, xlim=c(-38, 5), ylim = c(-15, 15),
+           panel.last = abline(h = ba$lines, lty = 1, col = "black", lwd = 1),
+           pch = ifelse(DATA$Category == "Normal", 16, 17),
+           main= ifelse(test == "SS", "a) SITA Standard", ifelse(test == "SF", "c) SITA Fast",
+                                                                 ifelse(test == "ZS", "b) ZATA Standard", "d) ZATA Fast"))),
+           xlab=" " ,ylab=" ", axes = F,
+           type = 'p', col = ifelse(DATA$Category == "Normal", "midnightblue", "brown3"), cex=3)
+    # xx <-  seq(-35, 0, length=77)
+    # 
+    # fit <- loess(ba$diffs*ba$lower.limit ~ ba$means, span = 0.5)
+    # pred <- predict(fit, xx, se=TRUE)
+    # lines(xx, pred$fit, lty= 1, col= 1, lwd = 1)
+    # fit <- loess(ba$diffs*ba$upper.limit ~ ba$means, span = 0.5)
+    # pred <- predict(fit, xx, se=TRUE)
+    # lines(xx, pred$fit, lty= 1, col= 1, lwd = 1)
+    
+    
+    
+    text(-36, (ba$mean.diffs-1), paste(round(ba$mean.diffs, digits = 2)),
+         font = 2, col = "black", cex = 2 )
+    text(-36, (ba$upper.limit-1), paste(round(ba$upper.limit, digits = 2)), 
+         font = 2, col = "black", cex = 2 )
+    text(-36, (ba$lower.limit-1), paste(round(ba$lower.limit, digits = 2)), 
+         font = 2, col = "black", cex = 2 )
+    
+    axis(1, at =  c(5, 0, -5, -15, -25, -35), labels =  c(5, 0, -5, -15, -25, -35),
+         cex.axis = 2, padj = 1.5)
+    axis(2, at = seq(15, -15, -5), labels = seq(15, -15, -5),
+         cex.axis = 2, hadj = 1.5, las = 1)
+    mtext(text = ifelse(test == "SS", " MD visit 1 - MD visit 2  (dB)                                                    ",
+                        " "), line = 6, side = 2, cex = 2)
+    
+    mtext(text= ifelse(test == "ZF", "Mean MD of visit 1 & 2 (dB)                                                       "," "),
+          line = 6, cex = 2, side = 1)
+    
+    
+    
+    box(col = "black", lwd = 1)
+    
 }
 par(mar = c(0, 0, 0, 0))
 plot(5, 5, type = "n", xlab = " ", ylab = " ", bty = "n", axes = F)
-legend(3, 6.5, bty = "n", legend = c("Normal", "Glaucoma"), 
+legend(3, 6.5, bty = "n", legend = c("Healthy", "Glaucoma"), 
        col = c ("midnightblue", "brown3"),pch = c(16, 17), cex = 3)
 
 
